@@ -42,11 +42,40 @@ const Utils = {
     );
   },
 
-  statusMsgObj(title, obj) {
-    console.log(
-      `%c${title || ""}\n%c${JSON.stringify(obj, null, 2)}`,
-      "font-weight: bold; color: #0dd8d8; text-decoration: underline;",
-      "color: #ceb73f;",
-    );
+  formatNumber(num) {
+    if (num >= 1e15)
+      return (num / 1e15).toFixed(3).replace(/\.?0+$/, "") + " Q";
+    if (num >= 1e12)
+      return (num / 1e12).toFixed(3).replace(/\.?0+$/, "") + " T";
+    if (num >= 1e9) return (num / 1e9).toFixed(3).replace(/\.?0+$/, "") + " B";
+    if (num >= 1e6) return (num / 1e6).toFixed(3).replace(/\.?0+$/, "") + " M";
+    if (num >= 1e3) return (num / 1e3).toFixed(3).replace(/\.?0+$/, "") + " K";
+    return num.toLocaleString();
+  },
+
+  formatNumberFixedWidth(num, longSuffix = false) {
+    let value, suffix;
+
+    if (num >= 1e15) {
+      value = (num / 1e15).toFixed(3);
+      suffix = longSuffix ? " Quadrillion" : " Q";
+    } else if (num >= 1e12) {
+      value = (num / 1e12).toFixed(3);
+      suffix = longSuffix ? " Trillion" : " T";
+    } else if (num >= 1e9) {
+      value = (num / 1e9).toFixed(3);
+      suffix = longSuffix ? " Billion" : " B";
+    } else if (num >= 1e6) {
+      value = (num / 1e6).toFixed(3);
+      suffix = longSuffix ? " Million" : " M";
+    } else if (num >= 1e3) {
+      value = (num / 1e3).toFixed(3);
+      suffix = longSuffix ? " Thousand" : " K";
+    } else {
+      value = num.toString();
+      suffix = "";
+    }
+
+    return value.padStart(7, "\u00A0") + suffix;
   },
 };
