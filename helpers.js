@@ -41,4 +41,12 @@ const Utils = {
       "color: #ceb73f;",
     );
   },
+
+  statusMsgObj(title, obj) {
+    console.log(
+      `%c${title || ""}\n%c${JSON.stringify(obj, null, 2)}`,
+      "font-weight: bold; color: #0dd8d8; text-decoration: underline;",
+      "color: #ceb73f;",
+    );
+  },
 };
