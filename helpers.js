@@ -1,4 +1,4 @@
-window.Utils = {
+const Utils = {
   showToast(message, duration = 3000) {
     let toast = document.getElementById("tm-toast");
 
