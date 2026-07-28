@@ -143,7 +143,7 @@ const Misc = {
       }
     }
 
-    value = String(value).replace(/\.?0+$/, "");
+    value = String(value).replace(/\.?0+$/, "") || "0";
 
     if (suffix) {
       suffix = " " + suffix;
@@ -166,7 +166,7 @@ const Misc = {
       }
     }
 
-    value = String(value).replace(/\.?0+$/, "");
+    value = String(value).replace(/\.?0+$/, "") || "0";
 
     if (suffix) {
       suffix = " " + suffix;
