@@ -235,7 +235,21 @@ console.log(calculateMSU(resources));
       metal * metalValue + crystal * crystalValue + deuterium * deuteriumValue
     );
   },
-};
+
+  calculateLoot(waves, baseAmount, precision = 6) {
+    const resourcesLeft = baseAmount * Math.pow(0.5, waves);
+    const percentageLeft = Math.pow(0.5, waves) * 100;
+    const percentageLooted = 100 - percentageLeft;
+
+    return {
+      resourcesLeft: Math.round(resourcesLeft),
+      percentageLooted,
+      percentageLeft,
+      percentageLootedFormatted: percentageLooted.toFixed(precision) + "%",
+      percentageLeftFormatted: percentageLeft.toFixed(precision) + "%",
+    };
+  },
+}; //END Misc
 
 /*
 const toast = new ToastLog({
