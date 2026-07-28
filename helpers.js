@@ -184,6 +184,27 @@ const Misc = {
       Deuterium: ship.Deuterium,
     };
   },
+
+  /*
+   Example:
+const resources = {
+    metal: 1000,
+    crystal: 500,
+    deuterium: 200
+};
+
+console.log(calculateMSU(resources));
+ Output: 2350 MSU
+*/
+  calculateMSU({ metal = 0, crystal = 0, deuterium = 0 }) {
+    const metalValue = 1;
+    const crystalValue = 3 / 2; // 1 crystal = 1.5 metal
+    const deuteriumValue = 3; // 1 deuterium = 3 metal
+
+    return (
+      metal * metalValue + crystal * crystalValue + deuterium * deuteriumValue
+    );
+  },
 };
 
 /*
