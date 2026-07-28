@@ -1,3 +1,7 @@
+/*NOTE - Updated 28.08.2026 03:15*/
+
+const RESOURCE_LANGUAGE = "DE";
+
 const shipInfo = [
   { Name: "Light Fighter", Metal: 3_000, Crystal: 1_000, Deuterium: 0 },
   { Name: "Heavy Fighter", Metal: 6_000, Crystal: 4_000, Deuterium: 0 },
@@ -125,15 +129,27 @@ const Misc = {
     );
   },
 
-  formatNumber(num) {
-    if (num >= 1e15)
-      return (num / 1e15).toFixed(3).replace(/\.?0+$/, "") + " Q";
-    if (num >= 1e12)
-      return (num / 1e12).toFixed(3).replace(/\.?0+$/, "") + " T";
-    if (num >= 1e9) return (num / 1e9).toFixed(3).replace(/\.?0+$/, "") + " B";
-    if (num >= 1e6) return (num / 1e6).toFixed(3).replace(/\.?0+$/, "") + " M";
-    if (num >= 1e3) return (num / 1e3).toFixed(3).replace(/\.?0+$/, "") + " K";
-    return num.toLocaleString();
+  formatNumber(num, longSuffix = false) {
+    let value = num;
+    let suffix = "";
+
+    const table = SUFFIX_TABLE[RESOURCE_LANGUAGE] || SUFFIX_TABLE.EN;
+
+    for (const item of table) {
+      if (num >= item.value) {
+        value = (num / item.value).toFixed(3);
+        suffix = longSuffix ? item.long : item.short;
+        break;
+      }
+    }
+
+    value = String(value).replace(/\.?0+$/, "");
+
+    if (suffix) {
+      suffix = " " + suffix;
+    }
+
+    return value + suffix;
   },
 
   formatNumberFixedWidth(num, longSuffix = false) {
@@ -159,6 +175,20 @@ const Misc = {
     return value.padStart(7, "\u00A0") + suffix;
   },
 
+  formatSmallNumber(num) {
+    if (num < 1000) {
+      return String(num);
+    }
+
+    if (num < 10000) {
+      return Math.floor(num)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    return Misc.formatNumber(num);
+  },
+
   parseNumber(text) {
     const raw = String(text).replace(/[^\d]/g, "");
     const value = Number(raw);
@@ -169,7 +199,7 @@ const Misc = {
     return str.charAt(0).toUpperCase() + str.slice(1);
   },
 
-  getShipCost(shipName) {
+  getShipCost(shipName, amount = 1) {
     const ship = shipInfo.find(
       (s) => s.Name.toLowerCase() === shipName.toLowerCase(),
     );
@@ -179,9 +209,9 @@ const Misc = {
     }
 
     return {
-      Metal: ship.Metal,
-      Crystal: ship.Crystal,
-      Deuterium: ship.Deuterium,
+      metal: ship.Metal * amount,
+      crystal: ship.Crystal * amount,
+      deuterium: ship.Deuterium * amount,
     };
   },
 
