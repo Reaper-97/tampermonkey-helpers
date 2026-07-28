@@ -31,7 +31,57 @@ const shipInfo = [
   { Name: "Asteroid Miner", Metal: 40_000, Crystal: 20_000, Deuterium: 8_000 },
 ];
 
-const Utils = {
+const SUFFIX_TABLE = {
+  EN: [
+    { value: 1e63, short: "Vg", long: "vigintillion" },
+    { value: 1e60, short: "Nd", long: "novemdecillion" },
+    { value: 1e57, short: "Od", long: "octodecillion" },
+    { value: 1e54, short: "Sed", long: "septendecillion" },
+    { value: 1e51, short: "Sd", long: "sexdecillion" },
+    { value: 1e48, short: "Qid", long: "quindecillion" },
+    { value: 1e45, short: "Qad", long: "quattuordecillion" },
+    { value: 1e42, short: "Td", long: "tredecillion" },
+    { value: 1e39, short: "Dd", long: "duodecillion" },
+    { value: 1e36, short: "Ud", long: "undecillion" },
+    { value: 1e33, short: "Dc", long: "decillion" },
+    { value: 1e30, short: "No", long: "nonillion" },
+    { value: 1e27, short: "Oc", long: "octillion" },
+    { value: 1e24, short: "Sp", long: "septillion" },
+    { value: 1e21, short: "Sx", long: "sextillion" },
+    { value: 1e18, short: "Qi", long: "quintillion" },
+    { value: 1e15, short: "Qa", long: "quadrillion" },
+    { value: 1e12, short: "T", long: "trillion" },
+    { value: 1e9, short: "B", long: "billion" },
+    { value: 1e6, short: "M", long: "million" },
+    { value: 1e3, short: "K", long: "thousand" },
+  ],
+
+  DE: [
+    { value: 1e63, short: "Dezd", long: "Dezilliarde" },
+    { value: 1e60, short: "Dez", long: "Dezillion" },
+    { value: 1e57, short: "Nond", long: "Nonilliarde" },
+    { value: 1e54, short: "Non", long: "Nonillion" },
+    { value: 1e51, short: "Oktd", long: "Oktilliarde" },
+    { value: 1e48, short: "Okt", long: "Oktillion" },
+    { value: 1e45, short: "Septd", long: "Septilliarde" },
+    { value: 1e42, short: "Sept", long: "Septillion" },
+    { value: 1e39, short: "Sextd", long: "Sextilliarde" },
+    { value: 1e36, short: "Sext", long: "Sextillion" },
+    { value: 1e33, short: "Qintd", long: "Quintilliarde" },
+    { value: 1e30, short: "Quint", long: "Quintillion" },
+    { value: 1e27, short: "Qdrd", long: "Quadrilliarde" },
+    { value: 1e24, short: "Quad", long: "Quadrillion" },
+    { value: 1e21, short: "Trd", long: "Trilliarde" },
+    { value: 1e18, short: "T", long: "Trillion" },
+    { value: 1e15, short: "Brd", long: "Billiarde" },
+    { value: 1e12, short: "B", long: "Billion" },
+    { value: 1e9, short: "Mrd", long: "Milliarde" },
+    { value: 1e6, short: "M", long: "Million" },
+    { value: 1e3, short: "Tsd", long: "Tausend" },
+  ],
+};
+
+const Misc = {
   showToast(message, duration = 3000) {
     let toast = document.getElementById("tm-toast");
 
@@ -87,29 +137,36 @@ const Utils = {
   },
 
   formatNumberFixedWidth(num, longSuffix = false) {
-    let value, suffix;
+    let value = num;
+    let suffix = "";
 
-    if (num >= 1e15) {
-      value = (num / 1e15).toFixed(3);
-      suffix = longSuffix ? " Quadrillion" : " Q";
-    } else if (num >= 1e12) {
-      value = (num / 1e12).toFixed(3);
-      suffix = longSuffix ? " Trillion" : " T";
-    } else if (num >= 1e9) {
-      value = (num / 1e9).toFixed(3);
-      suffix = longSuffix ? " Billion" : " B";
-    } else if (num >= 1e6) {
-      value = (num / 1e6).toFixed(3);
-      suffix = longSuffix ? " Million" : " M";
-    } else if (num >= 1e3) {
-      value = (num / 1e3).toFixed(3);
-      suffix = longSuffix ? " Thousand" : " K";
-    } else {
-      value = num.toString();
-      suffix = "";
+    const table = SUFFIX_TABLE[RESOURCE_LANGUAGE] || SUFFIX_TABLE.EN;
+
+    for (const item of table) {
+      if (num >= item.value) {
+        value = (num / item.value).toFixed(3);
+        suffix = longSuffix ? item.long : item.short;
+        break;
+      }
+    }
+
+    value = String(value).replace(/\.?0+$/, "");
+
+    if (suffix) {
+      suffix = " " + suffix;
     }
 
     return value.padStart(7, "\u00A0") + suffix;
+  },
+
+  parseNumber(text) {
+    const raw = String(text).replace(/[^\d]/g, "");
+    const value = Number(raw);
+    return isNaN(value) ? null : value;
+  },
+
+  capitalizeFirstChar(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   },
 
   getShipCost(shipName) {
