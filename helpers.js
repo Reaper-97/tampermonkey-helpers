@@ -266,26 +266,26 @@ const toast = new ToastLog({
 */
 class ToastLog {
   constructor(options = {}) {
-    this.maxMessages = options.maxMessages ?? 10;
-    this.duration = options.duration ?? 5000;
+    this.maxMessages = options.maxMessages ?? 5;
+    this.duration = options.duration ?? 2000;
+    this.showTimestamp = options.showTimestamp ?? true;
+    this.timestampFormat = options.timestampFormat ?? "HH:mm:ss";
 
     this.style = {
       top: "10px",
       left: "10px",
-      width: "300px",
+      width: "400px",
       maxHeight: "250px",
 
-      // defaults
       background: "#333",
       color: "#fff",
       padding: "10px",
       borderRadius: "6px",
       fontFamily: "Arial, sans-serif",
-      fontSize: "14px",
+      fontSize: "11px",
       zIndex: "999999",
       boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
 
-      // allow overrides
       ...(options.style ?? {}),
     };
 
@@ -311,6 +311,15 @@ class ToastLog {
     document.body.appendChild(this.toast);
   }
 
+  getTimestamp() {
+    const now = new Date();
+
+    return this.timestampFormat
+      .replace("HH", String(now.getHours()).padStart(2, "0"))
+      .replace("mm", String(now.getMinutes()).padStart(2, "0"))
+      .replace("ss", String(now.getSeconds()).padStart(2, "0"));
+  }
+
   show(message) {
     const entry = document.createElement("div");
 
@@ -318,6 +327,10 @@ class ToastLog {
       padding: "6px 0",
       borderBottom: "1px solid rgba(255,255,255,0.15)",
     });
+
+    if (this.showTimestamp) {
+      message = `[${this.getTimestamp()}] ${message}`;
+    }
 
     entry.textContent = message;
 
